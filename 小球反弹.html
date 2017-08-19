@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			#box{
+				width: 400px;
+				height: 400px;
+				border: 1px solid #000;
+			}
+			#ball{
+				width: 50px;
+				height: 50px;
+				background: blue;
+				position: absolute;
+				left:600px;
+				top:300px;
+				border-radius:50% ;
+			}
+		
+		</style>
+	</head>
+	<body>
+		<div id="box"></div>
+		<div id="ball"></div>
+		<script>
+			var box = document.getElementById('box');
+			var ball = document.getElementById('ball');
+			var boxBW = 1;
+			var maxT = box.clientTop+boxBW;
+			var maxL = box.clientLeft+boxBW;
+			var maxR = box.getBoundingClientRect().right-boxBW;
+			var maxB = box.getBoundingClientRect().bottom-boxBW;
+			ball.onmousedown = function(ev){
+				var b_mx = ev.clientX-ball.offsetLeft;
+				var b_my = ev.clientY-ball.offsetTop;
+				document.onmousemove = function(ev){
+					var mx = ev.clientX;
+					var my = ev.clientY;
+					ball.style.left = mx-b_mx+'px';
+					ball.style.top = my-b_my+'px';
+				}
+				document.onmouseup = function(){
+					document.onmousemove = null;
+					document.onmouseup = null;
+					if(duang(ball,box)){
+						var dl = ball.offsetLeft;
+						var dt = ball.offsetTop;
+						var x = Math.round(Math.random()*10-5);
+						var y = Math.round(Math.random()*10-5);
+						console.log(x,y)
+						setInterval(function(){
+							ball.style.left = (dl+=x)+'px';
+							ball.style.top = (dt+=y)+'px';
+							var x1 = Math.round(Math.random()*10-5);
+							var y1 = Math.round(Math.random()*10-5);
+							if(dl>=maxL&&dl<(maxL+5)){
+								ball.style.left = (dl=maxL+5)+'px';
+								y=y1;
+								if(x>0&&x1>0||x<0&&x1<0){
+									x = -x1;
+								}else{
+									x = x1;
+								}
+							}
+							if((dl+ball.offsetWidth)<=maxR&&(dl+ball.offsetWidth)>(maxR-5)){
+								ball.style.left = (dl=maxR-5-ball.offsetWidth)+'px';
+								y=y1;
+								if(x>0&&x1>0||x<0&&x1<0){
+									x = -x1;
+								}else{
+									x = x1;
+								}
+							}
+							if(dt>=maxT&&dt<(maxT+5)){
+								ball.style.top = (dt=maxT+5)+'px';
+								x = x1;
+								if(y>0&&y1>0||y<0&&y1<0){
+									y = -y1;
+								}else{
+									y = y1;
+								}
+							}
+							if((dt+ball.offsetHeight)<=maxB&&(dt+ball.offsetHeight)>(maxB-5)){
+								ball.style.top = (dt=maxB-5-ball.offsetHeight)+'px';
+								x = x1;
+								if(y>0&&y1>0||y<0&&y1<0){
+									y = -y1;
+								}else{
+									y = y1;
+								}
+							}
+						},20)
+					}
+				}
+			}
+			function duang(obj1,obj2){
+				var pos1 = obj1.getBoundingClientRect();
+				var pos2 = obj2.getBoundingClientRect();
+				if(pos1.left<pos2.left||pos1.bottom>pos2.bottom||pos1.top<pos2.top||pos1.right>pos2.right){
+					return false;
+				}else{
+					return true;
+				}
+			}
+		</script>
+	</body>
+</html>

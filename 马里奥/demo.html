@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			.line{
+				width: 100%;
+				height: 1px;
+				background: #000;
+				position: absolute;
+				top:400px;
+				left:0;
+			}
+			#div{
+				width: 50px;
+				height: 50px;
+				background: url(ma.png);
+				position: absolute;
+				top:350px;
+				left:0;
+				z-index: 100;
+				background-size:50px ;
+			}
+			span{
+				width: 50px;
+				height: 50px;
+				background: url(zhuan.png);
+				position: absolute;
+				top:200px;
+				background-size:50px ;
+			}
+			.star{
+				width: 20px;
+				height: 20px;
+				background: url(zhuan.png);
+				background-size:20px ;
+				position: absolute;
+				font-size:50px;
+			}
+			.zhuan{
+				
+			}
+		</style>
+	</head>
+	<body>
+		<div class="line"></div>
+		<div id="div"></div>
+		<script>
+			var n = 1
+			for(var i=0;i<40;i++){
+				n++;
+				var span = document.createElement('span');
+				span.style.left = n*32+'px';
+				document.body.appendChild(span);
+			}
+			var span = document.getElementsByTagName('span');
+			var div = document.getElementById('div');
+			var line = document.getElementsByClassName('line')[0];
+			var maxT = line.offsetTop;
+			var sg = div.offsetHeight;
+			var gao = -22;
+			var code = {
+				l:false,
+				r:false,
+				t:false
+			}
+			var arr=[];
+			var duangCheck = true;
+			for(var i=0;i<span.length;i++){
+				arr.push(span[i]);
+			}
+			document.onkeydown = function(ev){
+				if(ev.keyCode==37){
+					code.l = true;
+				}else if(ev.keyCode==39){
+					code.r = true;
+				}else if(ev.keyCode==32){
+					code.t = true;
+				}
+			}
+			document.onkeyup = function(ev){
+				if(ev.keyCode==37){
+					code.l = false;
+				}else if(ev.keyCode==39){
+					code.r = false;
+				}
+			}
+			setInterval(function(){
+				var l = div.offsetLeft;
+				var t = div.offsetTop;
+				if(code.l){
+					div.style.left = l-5+'px';
+				}
+				if(code.r){
+					div.style.left = l+5+'px';
+				}
+				if(code.t&&duangCheck){
+					div.style.top = (t+=++gao)+'px';
+					if(t==maxT-sg){
+						code.t = false;
+						gao = -22;
+					}
+				}
+				if(code.t&&!duangCheck){
+					gao=10;
+					div.style.top = (t+=++gao)+'px';
+					if(t>=maxT-sg){
+						div.style.top = maxT-sg+'px';
+						code.t = false;
+						gao = -22;
+						duangCheck = true;
+					}
+				}
+				for(var i=0;i<arr.length;i++){
+					if(duang(div,arr[i])==1){
+						duangCheck = false;
+						var dl = arr[i].offsetLeft;
+						var dt = arr[i].offsetTop;
+						document.body.removeChild(arr[i]);
+						for(var j=0;j<5;j++){
+							xing(dl,dt);
+						}
+					}
+				}
+			},15)
+			function duang(obj1,obj2){
+				var pos1 = obj1.getBoundingClientRect();
+				var pos2 = obj2.getBoundingClientRect();
+				if(pos1.left<pos2.right&&pos1.left>(pos2.left-pos1.width)&&pos1.top<pos2.bottom){
+					return 1
+				}
+			}
+			function xing(dl,dt){
+				var suizhuan = document.createElement('div');
+				suizhuan.className = 'star';
+				suizhuan.style.left = dl-suizhuan.offsetLeft/2+'px';
+				suizhuan.style.top = dt-suizhuan.offsetHeight/2+'px';
+				console.log(suizhuan.style.left,suizhuan.style.top)
+				document.body.appendChild(suizhuan);
+				var al = suizhuan.offsetLeft;
+				var at = suizhuan.offsetTop;
+				var x = Math.round(Math.random()*10-5);
+				var y = Math.round(Math.random()*10-20);
+				suizhuan.timer = setInterval(function(){
+					suizhuan.style.left = (al+=x)+'px';
+					suizhuan.style.top = (at+=++y)+'px';
+					var o = suizhuan.offsetTop;
+					if(o>=maxT){
+						clearInterval(suizhuan.timer);
+						document.body.removeChild(suizhuan);
+					}
+				},20)
+			}
+		</script>
+	</body>
+</html>
